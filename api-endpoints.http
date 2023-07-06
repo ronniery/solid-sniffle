@@ -5,6 +5,11 @@ GET {{baseurl}}/tickets
 
 ###
 
+// Run health check route
+GET {{baseurl}}/health
+
+###
+
 // Create a ticket
 POST {{baseurl}}/tickets
 Content-Type: application/json
