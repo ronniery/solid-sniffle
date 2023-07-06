@@ -1,6 +1,7 @@
 import "dotenv-defaults/config"
 import express from "express";
 import mongoose from "mongoose";
+import errorHandler from "./utils/error.handler";
 import ticketRoutes from './routes/ticket.route';
 import healthRoutes from './routes/health.route';
 import { MongoMemoryServer } from "mongodb-memory-server";
@@ -24,6 +25,9 @@ const start = async () => {
 
     // Registering all app routes
     ticketRoutes(app);
+
+    // Register the error handler
+    app.use(errorHandler)
 
     // Starting the server
     await new Promise<void>((resolve, reject) => {

@@ -1,13 +1,10 @@
 import Ticket, { ITicket } from '../models/ticket.model';
 
 export const getAll = async () =>
-  await Ticket.find({});
+  await Ticket.find({}).sort({ deadline: 'descending' });
 
-export const update = async (ticketId: string, ticket: ITicket) =>
-  await Ticket.findByIdAndUpdate(ticketId, ticket);
+export const findAndUpdate = async (ticketId: string, newTicket: ITicket) =>
+  await Ticket.findByIdAndUpdate(ticketId, newTicket, { new: true });
 
-export const add = async (ticket: ITicket) =>
+export const createNew = async (ticket: ITicket) =>
   await Ticket.create(ticket);
-
-export const getById = async (ticketId: string) =>
-  await Ticket.findOne({ id: ticketId });

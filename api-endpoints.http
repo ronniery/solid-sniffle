@@ -21,14 +21,14 @@ Content-Type: application/json
 ###
 
 // Update a single ticket
-PUT {{baseurl}}/tickets/64a6e25936e620b3ef3d9be3
+PUT {{baseurl}}/tickets/64a6f4ffbfdd0118007d04c6
 Content-Type: application/json
 
 {
   "ticket": {
     "client": "foo",
     "issue": "the test was fixed",
-    "status": "close",
+    "status": "closed",
     "deadline": "2023-02-15"
   }
 }
