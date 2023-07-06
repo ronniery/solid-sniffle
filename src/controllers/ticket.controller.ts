@@ -4,7 +4,7 @@ import { getAll, findAndUpdate, createNew } from '../services/ticket.service';
 import ApiError from "../utils/api.error";
 
 // GET /tickets
-export const listAll = async (_req: Request, res: Response): Promise<void> => {
+export const getAllTickets = async (_req: Request, res: Response): Promise<void> => {
   // Service call, to list all tickets
   const tickets = await getAll();
 
@@ -12,7 +12,7 @@ export const listAll = async (_req: Request, res: Response): Promise<void> => {
 }
 
 // POST: /tickets
-export const createOne = async (req: Request, res: Response): Promise<void> => {
+export const createTicket = async (req: Request, res: Response): Promise<void> => {
   const { ticket } = req.body;
   // Service call, to create a new ticket
   const createdTicket = await createNew(ticket);
@@ -21,7 +21,7 @@ export const createOne = async (req: Request, res: Response): Promise<void> => {
 }
 
 // PUT: /tickets/{id}
-export const updateById = async (req: Request, res: Response): Promise<void> => {
+export const updateTicketById = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { ticket: newTicket } = req.body;
   // Service call, to update a ticket by it's id
