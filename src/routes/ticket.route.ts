@@ -11,4 +11,4 @@ export default (app: Express): void => {
   app.get(prefix, asyncHandler(ticketController.getAllTickets));
   app.put(`${prefix}/:id`, validateTicketUpdate, asyncHandler(ticketController.updateTicketById));
   app.post(prefix, validateTicketCreation, asyncHandler(ticketController.createTicket));
-}
+};

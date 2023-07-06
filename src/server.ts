@@ -1,10 +1,10 @@
-import "dotenv-defaults/config"
-import express from "express";
-import mongoose from "mongoose";
-import errorHandler from "./utils/error.handler";
+import 'dotenv-defaults/config';
+import express from 'express';
+import mongoose from 'mongoose';
+import errorHandler from './utils/error.handler';
 import ticketRoutes from './routes/ticket.route';
 import healthRoutes from './routes/health.route';
-import { MongoMemoryServer } from "mongodb-memory-server";
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const { APP_PORT = '3000' } = process.env;
 
@@ -14,7 +14,7 @@ const start = async () => {
     const mongoServer = await MongoMemoryServer.create();
 
     // Connecting to the mongoDB memory server using mongoose
-    await mongoose.connect(mongoServer.getUri(), { dbName: "notificationsDB" });
+    await mongoose.connect(mongoServer.getUri(), { dbName: 'notificationsDB' });
 
     // Creating the express app
     const app = express();
@@ -27,11 +27,11 @@ const start = async () => {
     ticketRoutes(app);
 
     // Register the error handler
-    app.use(errorHandler)
+    app.use(errorHandler);
 
     // Starting the server
     await new Promise<void>((resolve, reject) => {
-      app.listen(Number(APP_PORT), resolve).on("error", reject);
+      app.listen(Number(APP_PORT), resolve).on('error', reject);
     });
 
     console.log(`Server started at http://localhost:${APP_PORT}`);
@@ -41,9 +41,9 @@ const start = async () => {
   }
 };
 
-process.on("beforeExit", async () => {
+process.on('beforeExit', async () => {
   await mongoose.disconnect();
-  console.log("mongoose disconnected");
+  console.log('mongoose disconnected');
 });
 
 if (require.main === module) {
