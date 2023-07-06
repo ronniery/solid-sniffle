@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import ticketRoutes from './routes/ticket.routes';
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 const start = async () => {
@@ -13,6 +14,9 @@ const start = async () => {
     // Creating the express app
     const app = express();
     app.use(express.json());
+
+    // Registering all app routes
+    ticketRoutes(app);
 
     // Starting the server
     await new Promise<void>((resolve, reject) => {

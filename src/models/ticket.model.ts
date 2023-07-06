@@ -9,12 +9,19 @@ export interface ITicket extends Document {
   client: string;
   issue: string;
   status: Status;
+  deadline: Date;
 }
 
 const TicketSchema: Schema = new Schema({
   client: { type: String, required: true, unique: true },
   issue: { type: String, required: true },
-  status: { type: Number, required: true, enum: Status }
+  deadline: { type: Date, required: true, default: Date.now() },
+  status: {
+    type: String,
+    required: true,
+    enum: Status,
+    default: Status.OPEN
+  }
 });
 
 export default mongoose.model<ITicket>('Ticket', TicketSchema);

@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 
 // GET /tickets
-export const listAll = async (req: Request, res: Response) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
     // Service call, to list all tickets
+    res.send({ tickets: [] })
   } catch (err: unknown) {
     res.status(500).json(err)
   }
@@ -15,6 +16,7 @@ export const createOne = async (req: Request, res: Response) => {
 
   try {
     // Service call, to create a new ticket
+    res.json({ ticket })
   } catch (err: unknown) {
     res.status(500).json(err)
   }
@@ -27,7 +29,8 @@ export const updateById = async (req: Request, res: Response) => {
 
   try {
     // Service call, to update a ticket by it's id
-  } catch(err: unknown) {
+    res.json({ id, ticket })
+  } catch (err: unknown) {
     res.status(500).json(err)
   }
 }
