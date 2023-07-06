@@ -1,12 +1,18 @@
 import { Request, Response } from "express";
+import { StatusCodes } from 'http-status-codes';
+import * as ticketService from '../services/ticket.service';
+
+const { INTERNAL_SERVER_ERROR: InternalError } = StatusCodes;
 
 // GET /tickets
-export const getAll = async (req: Request, res: Response) => {
+export const getAll = async (_req: Request, res: Response) => {
   try {
     // Service call, to list all tickets
-    res.send({ tickets: [] })
+    const tickets = await ticketService.getAll();
+
+    res.status(StatusCodes.OK).send({ tickets });
   } catch (err: unknown) {
-    res.status(500).json(err)
+    res.status(InternalError).json(err)
   }
 }
 
@@ -16,9 +22,11 @@ export const createOne = async (req: Request, res: Response) => {
 
   try {
     // Service call, to create a new ticket
-    res.json({ ticket })
+    await ticketService.add(ticket);
+
+    res.status(StatusCodes.OK)
   } catch (err: unknown) {
-    res.status(500).json(err)
+    res.status(InternalError).json(err)
   }
 }
 
@@ -28,9 +36,15 @@ export const updateById = async (req: Request, res: Response) => {
   const { ticket } = req.body;
 
   try {
+    if (!ticket) {
+      return res.status(404).json({ error: 'Ticket not found' });
+    }
+
     // Service call, to update a ticket by it's id
-    res.json({ id, ticket })
+    await ticketService.update(id, ticket);
+
+    res.json(StatusCodes.OK);
   } catch (err: unknown) {
-    res.status(500).json(err)
+    res.status(InternalError).json(err)
   }
 }

@@ -13,15 +13,19 @@ export interface ITicket extends Document {
 }
 
 const TicketSchema: Schema = new Schema({
-  client: { type: String, required: true, unique: true },
+  client: { type: String, required: true, unique: false },
   issue: { type: String, required: true },
-  deadline: { type: Date, required: true, default: Date.now() },
+  deadline: {
+    type: Date,
+    required: true,
+    default: () => new Date(+new Date() + 2 * 24 * 60 * 60 * 1000) // Defaults to 2 days in the future
+  },
   status: {
     type: String,
     required: true,
     enum: Status,
     default: Status.OPEN
   }
-});
+}, { versionKey: false });
 
 export default mongoose.model<ITicket>('Ticket', TicketSchema);

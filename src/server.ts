@@ -1,7 +1,11 @@
+import "dotenv-defaults/config"
 import express from "express";
 import mongoose from "mongoose";
-import ticketRoutes from './routes/ticket.routes';
+import ticketRoutes from './routes/ticket.route';
+import healthRoutes from './routes/health.route';
 import { MongoMemoryServer } from "mongodb-memory-server";
+
+const { APP_PORT = '3000' } = process.env;
 
 const start = async () => {
   try {
@@ -15,15 +19,18 @@ const start = async () => {
     const app = express();
     app.use(express.json());
 
+    // Register a health check route, to be used inside docker
+    healthRoutes(app);
+
     // Registering all app routes
     ticketRoutes(app);
 
     // Starting the server
     await new Promise<void>((resolve, reject) => {
-      app.listen(3000, resolve).on("error", reject);
+      app.listen(Number(APP_PORT), resolve).on("error", reject);
     });
 
-    console.log(`Server started at http://localhost:3000`);
+    console.log(`Server started at http://localhost:${APP_PORT}`);
   } catch (error: unknown) {
     console.log(error);
     process.exit(1);
