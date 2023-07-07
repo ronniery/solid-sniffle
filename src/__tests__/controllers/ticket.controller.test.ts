@@ -39,7 +39,7 @@ describe('Ticket Controller', () => {
       .set('Accept', 'application/json')
       .send(payload as object);
 
-  describe('[GET] All tickets on route /tickets', () => {
+  describe('(get) All tickets on route /tickets', () => {
     const getAllTickets = async (): Promise<Response> =>
       await request(server).get('/tickets').expect('Content-Type', /json/).expect(StatusCodes.OK);
 
@@ -112,7 +112,7 @@ describe('Ticket Controller', () => {
     });
   });
 
-  describe('[POST] Create tickets on route /tickets', () => {
+  describe('(post) Create tickets on route /tickets', () => {
     const createTicketFaulty = async (payload: Payload, options: CreateFaultyTicketOptions): Promise<void> => {
       const response = await createTicket(payload);
       const { message, status } = options;
@@ -315,7 +315,7 @@ describe('Ticket Controller', () => {
     });
   });
 
-  describe('[PUT] Update ticket on route /tickets/:id', () => {
+  describe('(put) Update ticket on route /tickets/:id', () => {
     let createdTicket: Payload;
 
     beforeEach(async () => {
