@@ -1,4 +1,4 @@
-import Ticket, { ITicket } from '../models/ticket.model';
+import Ticket, { type ITicket } from '../models/ticket.model';
 
 export const getAll = async () => await Ticket.find({}).sort({ deadline: 'descending' });
 

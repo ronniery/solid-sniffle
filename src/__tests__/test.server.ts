@@ -1,4 +1,5 @@
 import express, { type Express } from 'express';
+import errorHandler from '../utils/error.handler';
 
 type TestRoutes = (server: Express) => void;
 
@@ -10,6 +11,9 @@ const createTestHost = async (routes: TestRoutes): Promise<Express> => {
 
   // Load the test routes
   routes(server);
+
+  // Global error handler
+  server.use(errorHandler)
 
   // Return server instance
   return server;

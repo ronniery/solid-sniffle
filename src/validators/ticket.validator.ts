@@ -30,10 +30,35 @@ export const validateTicketCreation = (req: Request, _res: Response, next: NextF
   const nextTwoDays = date.addDays(new Date(), 2);
 
   const ticketOnBody = Joi.object({
-    client: Joi.string().min(2),
-    issue: Joi.string().min(10).max(450),
-    status: Joi.string().optional().valid(Status.OPEN, Status.CLOSED),
-    deadline: Joi.date().optional().greater(lastTwoDays).less(nextTwoDays),
+    client: (
+      Joi
+        .string()
+        .min(2)
+        .max(80)
+        .required()
+    ),
+    issue: (
+      Joi
+        .string()
+        .min(10)
+        .max(450)
+        .required()
+    ),
+    status: (
+      Joi
+        .string()
+        .optional()
+        .valid(Status.OPEN, Status.CLOSED)
+        .default(Status.OPEN)
+    ),
+    deadline: (
+      Joi
+        .date()
+        .optional()
+        .greater(lastTwoDays)
+        .less(nextTwoDays)
+        .default(new Date().toISOString())
+    ),
   });
 
   _validateWithSchema(ticketOnBody, ticket);

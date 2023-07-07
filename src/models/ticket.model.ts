@@ -21,6 +21,7 @@ const TicketSchema: Schema = new Schema(
     deadline: {
       type: String,
       required: true,
+      default: () => new Date().toISOString()
     },
     status: {
       type: String,

@@ -5,20 +5,20 @@ import { getAll, findAndUpdate, createNew } from '../services/ticket.service';
 import ApiError from '../utils/api.error';
 
 // GET /tickets
-export const getAllTickets = async (_req: Request, res: Response): Promise<void> => {
-  const tickets = await getAll();
-
-  res.status(StatusCodes.OK)
-    .contentType('application/json')
-    .json({ tickets: tickets || [] });
-};
+export const getAllTickets = async (_req: Request, res: Response): Promise<void> =>
+  getAll()
+    .then((tickets = []) => {
+      res.status(StatusCodes.OK)
+        .json({ tickets });
+    });
 
 // POST: /tickets
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
   const { ticket } = req.body;
   const createdTicket = await createNew(ticket);
 
-  res.status(StatusCodes.CREATED).json(createdTicket);
+  res.status(StatusCodes.CREATED)
+    .json(createdTicket);
 };
 
 // PUT: /tickets/{id}
@@ -31,5 +31,6 @@ export const updateTicketById = async (req: Request, res: Response): Promise<voi
     throw new ApiError('Ticket not found', { status: StatusCodes.NOT_FOUND });
   }
 
-  res.status(StatusCodes.OK).json(ticket.toJSON());
+  res.status(StatusCodes.OK)
+    .json(ticket.toJSON());
 };
