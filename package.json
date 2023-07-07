@@ -9,7 +9,7 @@
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p .",
-    "test": "jest --watchAll --no-cache --detectOpenHandles"
+    "test": "jest --watchAll --no-cache --runInBand --detectOpenHandles"
   },
   "keywords": [],
   "author": "",

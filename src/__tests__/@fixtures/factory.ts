@@ -1,5 +1,4 @@
 import { Factory } from 'fishery';
-import { Types } from 'mongoose';
 import { faker } from '@faker-js/faker';
 import date from 'date-and-time';
 
@@ -18,7 +17,6 @@ const ticket = Factory.define<ITicket, TicketTransientParams>(() => {
     status: faker.datatype.boolean() ? Status.OPEN : Status.CLOSED,
     issue: faker.lorem.lines({ min: 1, max: 3 }),
     deadline: faker.date.between({ from: lastDays, to: nextDays }).toISOString(),
-    _id: new Types.ObjectId().toString(),
   };
 });
 

@@ -6,7 +6,7 @@ export enum Status {
 }
 
 export interface ITicket {
-  _id: string;
+  _id?: string;
   client: string;
   issue: string;
   status: Status;
