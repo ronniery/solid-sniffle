@@ -1,23 +1,25 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, type Document } from 'mongoose';
 
 export enum Status {
   OPEN = 'open',
   CLOSED = 'closed',
 }
 
-export interface ITicket extends Document {
+export interface ITicket {
   client: string;
   issue: string;
   status: Status;
-  deadline: Date;
+  deadline: string;
 }
+
+export interface ITicketDocument extends Document { }
 
 const TicketSchema: Schema = new Schema(
   {
     client: { type: String, required: true, unique: false },
     issue: { type: String, required: true },
     deadline: {
-      type: Date,
+      type: String,
       required: true,
     },
     status: {
@@ -30,4 +32,4 @@ const TicketSchema: Schema = new Schema(
   { versionKey: false }
 );
 
-export default mongoose.model<ITicket>('Ticket', TicketSchema);
+export default mongoose.model<ITicketDocument>('Ticket', TicketSchema);

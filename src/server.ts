@@ -1,10 +1,11 @@
 import 'dotenv-defaults/config';
 import express from 'express';
 import mongoose from 'mongoose';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+
 import errorHandler from './utils/error.handler';
 import ticketRoutes from './routes/ticket.route';
 import healthRoutes from './routes/health.route';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const { APP_PORT = '3000' } = process.env;
 

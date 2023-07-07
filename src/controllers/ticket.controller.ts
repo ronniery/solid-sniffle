@@ -6,16 +6,16 @@ import ApiError from '../utils/api.error';
 
 // GET /tickets
 export const getAllTickets = async (_req: Request, res: Response): Promise<void> => {
-  // Service call, to list all tickets
   const tickets = await getAll();
 
-  res.status(StatusCodes.OK).send({ tickets });
+  res.status(StatusCodes.OK)
+    .contentType('application/json')
+    .json({ tickets: tickets || [] });
 };
 
 // POST: /tickets
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
   const { ticket } = req.body;
-  // Service call, to create a new ticket
   const createdTicket = await createNew(ticket);
 
   res.status(StatusCodes.CREATED).json(createdTicket);
@@ -25,7 +25,6 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
 export const updateTicketById = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
   const { ticket: newTicket } = req.body;
-  // Service call, to update a ticket by it's id
   const ticket = await findAndUpdate(id, newTicket);
 
   if (!ticket) {
