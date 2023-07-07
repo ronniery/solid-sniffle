@@ -9,7 +9,7 @@ type TicketTransientParams = {
   _id: string
 }
 
-const ticket = Factory.define<ITicket, TicketTransientParams>(({ transientParams = {} }) => {
+const ticket = Factory.define<ITicket, TicketTransientParams>(() => {
   const lastDays = date.addDays(new Date(), -2);
   const nextDays = date.addDays(new Date(), 2);
 
@@ -18,7 +18,7 @@ const ticket = Factory.define<ITicket, TicketTransientParams>(({ transientParams
     status: faker.datatype.boolean() ? Status.OPEN : Status.CLOSED,
     issue: faker.lorem.lines({ min: 1, max: 3 }),
     deadline: faker.date.between({ from: lastDays, to: nextDays }).toISOString(),
-    ...transientParams
+    _id: new Types.ObjectId().toString()
   }
 });
 

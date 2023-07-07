@@ -6,6 +6,7 @@ export enum Status {
 }
 
 export interface ITicket {
+  _id: string,
   client: string;
   issue: string;
   status: Status;
@@ -30,7 +31,9 @@ const TicketSchema: Schema = new Schema(
       default: Status.OPEN,
     },
   },
-  { versionKey: false }
+  {
+    versionKey: false
+  }
 );
 
 export default mongoose.model<ITicketDocument>('Ticket', TicketSchema);

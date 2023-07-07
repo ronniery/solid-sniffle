@@ -6,7 +6,7 @@ import { StatusCodes } from 'http-status-codes';
 
 import { factory } from '../@fixtures/factory';
 import { createTestHost } from '../test.server';
-import model, { ITicket, Status } from '../../models/ticket.model';
+import ticketModel, { ITicket, Status } from '../../models/ticket.model';
 import routes from '../../routes/ticket.route';
 
 // Not compatible with ES6 import/export
@@ -24,7 +24,14 @@ describe('Ticket Controller', () => {
     modelMock?.reset();
   })
 
-  describe('/GET/ All tickets on route /tickets', () => {
+  const createTicket = async (ticket: Partial<ITicket>) =>
+    request(server)
+      .post('/tickets')
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .send({ ticket })
+
+  describe('[GET] All tickets on route /tickets', () => {
     const getAllTickets = async () =>
       request(server)
         .get('/tickets')
@@ -42,7 +49,7 @@ describe('Ticket Controller', () => {
       const ticket = factory.ticket.build();
 
       // Mock model result
-      modelMock = mockingoose(model)
+      modelMock = mockingoose(ticketModel)
         .toReturn([ticket], 'find');
 
       const { body } = await getAllTickets();
@@ -67,7 +74,7 @@ describe('Ticket Controller', () => {
       })
 
       // Mock model result
-      modelMock = mockingoose(model)
+      modelMock = mockingoose(ticketModel)
         .toReturn(_tickets, 'find');
 
       const { body } = await getAllTickets();
@@ -84,7 +91,7 @@ describe('Ticket Controller', () => {
 
       const descOrderedTickets = orderBy(_tickets, 'deadline', 'desc');
 
-      modelMock = mockingoose(model)
+      modelMock = mockingoose(ticketModel)
         .toReturn(descOrderedTickets, 'find');
 
       const { body } = await getAllTickets();
@@ -95,14 +102,7 @@ describe('Ticket Controller', () => {
     });
   });
 
-  describe('/POST/ Create tickets on route /tickets', () => {
-    const createTicket = async (ticket: Partial<ITicket>) =>
-      request(server)
-        .post('/tickets')
-        .set('Content-Type', 'application/json')
-        .set('Accept', 'application/json')
-        .send({ ticket })
-
+  describe('[POST] Create tickets on route /tickets', () => {
     const createFailTicket = async (ticket: Partial<ITicket>, { message, status }: { message: string | RegExp, status: number }) => {
       const response = await createTicket(ticket);
       const { body, error, status: httpStatus, type } = response;
@@ -250,14 +250,40 @@ describe('Ticket Controller', () => {
     });
   });
 
-  it('should update a ticket by ID', async () => {
-    const id = '123'; // Provide a valid ticket ID
-    const newTicket = { /* Provide updated ticket data */ };
-    const response = await request(server).put(`/tickets/${id}`).send({ ticket: newTicket });
-    expect(response.status).toBe(StatusCodes.OK);
-    expect(response.body).toBeDefined();
-    // Add more assertions based on the expected response
-  });
+  describe('[PUT] Update ticket on route /tickets/:id', () => {
+    let createdTicket: Partial<ITicket> | null;
+
+    beforeEach(async () => {
+      const ticket = factory.ticket.build();
+      const { body } = await createTicket(ticket);
+
+      createdTicket = body;
+    })
+
+    afterEach(() => {
+      createdTicket = null;
+    })
+
+    it('should update a ticket by ID', async () => {
+      modelMock = mockingoose(ticketModel)
+        .toReturn((query: any) => {
+          return 'test';
+        })
+      // .toReturn({ answer: "puta que pariu" }, 'findOneAndUpdate');
+
+      const response = await request(server)
+        .put(`/tickets/${createdTicket?._id}`)
+        .send({
+          ticket: {
+            status: Status.CLOSED
+          }
+        });
+
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toBeDefined();
+      // Add more assertions based on the expected response
+    }, 900000);
+  })
 
   it('should throw an error if ticket is not found during update', async () => {
     const id = 'nonexistent-id'; // Provide a nonexistent ticket ID
