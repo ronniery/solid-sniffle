@@ -6,14 +6,14 @@ export enum Status {
 }
 
 export interface ITicket {
-  _id: string,
+  _id: string;
   client: string;
   issue: string;
   status: Status;
   deadline: string;
 }
 
-export interface ITicketDocument extends Document { }
+export interface ITicketDocument extends Document {}
 
 const TicketSchema: Schema = new Schema(
   {
@@ -22,7 +22,7 @@ const TicketSchema: Schema = new Schema(
     deadline: {
       type: String,
       required: true,
-      default: () => new Date().toISOString()
+      default: () => new Date().toISOString(),
     },
     status: {
       type: String,
@@ -32,7 +32,7 @@ const TicketSchema: Schema = new Schema(
     },
   },
   {
-    versionKey: false
+    versionKey: false,
   }
 );
 

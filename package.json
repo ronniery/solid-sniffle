@@ -6,7 +6,7 @@
   "scripts": {
     "start": "cross-env DEBUG=express:* & nodemon",
     "prettier": "npx prettier --write \"src/**/*.{ts,js,json}\"",
-    "lint": "npm run eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p .",
     "test": "jest --watchAll --no-cache --detectOpenHandles"
@@ -15,19 +15,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/preset-env": "^7.22.5",
+    "@babel/preset-env": "^7.22.7",
     "@babel/preset-typescript": "^7.22.5",
     "@faker-js/faker": "^8.0.2",
     "@types/express": "^4.17.17",
     "@types/express-healthcheck": "^0.1.0",
     "@types/jest": "^29.5.2",
     "@types/lodash": "^4.14.195",
-    "@types/mockingoose": "^2.13.0",
-    "@types/node": "^20.3.2",
+    "@types/node": "^20.4.0",
     "@types/supertest": "^2.0.12",
-    "@typescript-eslint/eslint-plugin": "^5.60.1",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.43.0",
+    "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^36.0.0",
     "eslint-plugin-import": "^2.27.5",
@@ -35,7 +34,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-promise": "^6.1.1",
     "fishery": "^2.2.2",
-    "jest": "^29.5.0",
+    "jest": "^29.6.1",
     "lodash": "^4.17.21",
     "mockingoose": "^2.16.2",
     "nodemon": "^2.0.22",
@@ -43,7 +42,7 @@
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.0"
   },
   "dependencies": {
     "date-and-time": "^3.0.2",
@@ -54,6 +53,6 @@
     "http-status-codes": "^2.2.0",
     "joi": "^17.9.2",
     "mongodb-memory-server": "^8.13.0",
-    "mongoose": "^7.3.1"
+    "mongoose": "^7.3.2"
   }
 }

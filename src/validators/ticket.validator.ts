@@ -1,20 +1,20 @@
 import Joi from 'joi';
 import date from 'date-and-time';
-import { NextFunction, Request, Response } from 'express';
+import { type NextFunction, type Request, type Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { Status } from '../models/ticket.model';
 import ApiError from '../utils/api.error';
 
-const _validateWithSchema = (schema: Joi.Schema, target: Record<string, unknown> | string | number) => {
+const _validateWithSchema = (schema: Joi.Schema, target: Record<string, unknown> | string | number): void => {
   const { error } = schema.validate(target);
 
-  if (error) {
+  if (error != null) {
     throw new ApiError(error.message, { status: StatusCodes.BAD_REQUEST });
   }
 };
 
-const _validateRequestBody = (req: Request) => {
+const _validateRequestBody = (req: Request): void => {
   const bodySchema = Joi.object({
     ticket: Joi.object().required(),
   });
@@ -30,35 +30,10 @@ export const validateTicketCreation = (req: Request, _res: Response, next: NextF
   const nextTwoDays = date.addDays(new Date(), 2);
 
   const ticketOnBody = Joi.object({
-    client: (
-      Joi
-        .string()
-        .min(2)
-        .max(80)
-        .required()
-    ),
-    issue: (
-      Joi
-        .string()
-        .min(10)
-        .max(450)
-        .required()
-    ),
-    status: (
-      Joi
-        .string()
-        .optional()
-        .valid(Status.OPEN, Status.CLOSED)
-        .default(Status.OPEN)
-    ),
-    deadline: (
-      Joi
-        .date()
-        .optional()
-        .greater(lastTwoDays)
-        .less(nextTwoDays)
-        .default(new Date().toISOString())
-    ),
+    client: Joi.string().min(2).max(80).required(),
+    issue: Joi.string().min(10).max(450).required(),
+    status: Joi.string().optional().valid(Status.OPEN, Status.CLOSED).default(Status.OPEN),
+    deadline: Joi.date().optional().greater(lastTwoDays).less(nextTwoDays).default(new Date().toISOString()),
   });
 
   _validateWithSchema(ticketOnBody, ticket);

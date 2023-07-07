@@ -8,6 +8,6 @@ export default class ApiError extends Error {
   status: StatusCodes;
   constructor(message: string, options?: ApiErrorOptions) {
     super(message, { cause: options?.cause });
-    this.status = options?.status || StatusCodes.INTERNAL_SERVER_ERROR;
+    this.status = options?.status ?? StatusCodes.INTERNAL_SERVER_ERROR;
   }
 }

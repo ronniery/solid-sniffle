@@ -9,7 +9,7 @@ import healthRoutes from './routes/health.route';
 
 const { APP_PORT = '3000' } = process.env;
 
-const start = async () => {
+const start = async (): Promise<void> => {
   try {
     // Creating the mongoDB memory server
     const mongoServer = await MongoMemoryServer.create();
@@ -42,13 +42,16 @@ const start = async () => {
   }
 };
 
-process.on('beforeExit', async () => {
-  await mongoose.disconnect();
-  console.log('mongoose disconnected');
+process.on('beforeExit', (): void => {
+  void mongoose.disconnect().then(() => {
+    console.log('mongoose disconnected');
+  });
 });
 
 if (require.main === module) {
-  start();
+  start().catch((err) => {
+    console.log(err);
+  });
 }
 
 export { start };

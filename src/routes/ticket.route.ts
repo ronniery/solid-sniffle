@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import { type Express } from 'express';
 import asyncHandler from 'express-async-handler';
 
 import { validateTicketCreation, validateTicketUpdate } from '../validators/ticket.validator';

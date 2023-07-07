@@ -13,7 +13,7 @@ const createTestHost = async (routes: TestRoutes): Promise<Express> => {
   routes(server);
 
   // Global error handler
-  server.use(errorHandler)
+  server.use(errorHandler);
 
   // Return server instance
   return server;

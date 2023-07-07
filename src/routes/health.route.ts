@@ -1,4 +1,4 @@
-import { Express } from 'express';
+import { type Express } from 'express';
 import healthCheck from 'express-healthcheck';
 
 /* Register a route for health checking */
