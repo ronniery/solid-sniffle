@@ -10,7 +10,8 @@
     "lint:fix": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.prod.json",
-    "test": "jest --watchAll --no-cache --runInBand --detectOpenHandles",
+    "test:watch": "jest --watchAll --no-cache --runInBand --detectOpenHandles",
+    "test": "jest --no-cache --runInBand --detectOpenHandles",
     "prepare": "ts-patch install -s && husky install"
   },
   "keywords": [],
