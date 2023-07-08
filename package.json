@@ -7,6 +7,7 @@
     "start": "cross-env DEBUG=express:* & nodemon",
     "prettier": "npx prettier --write \"src/**/*.{ts,js,json}\"",
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
+    "lint:fix": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p .",
     "test": "jest --watchAll --no-cache --runInBand --detectOpenHandles"
