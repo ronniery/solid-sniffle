@@ -16,7 +16,7 @@
     ".prettierrc": true,
     ".tool-versions": true,
     ".eslint": true,
-    "**/*.test.ts": false,
+    "**/*.test.ts": true,
     "package-lock.json": true,
     "Dockerfile": true,
     "jest.config.js": true,

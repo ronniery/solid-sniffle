@@ -1,19 +1,17 @@
 {
+  "root": true,
   "env": {
     "es2021": true,
     "node": true
   },
-  "ignorePatterns": [
-    "dist/",
-    "node_modules/**/*"
-  ],
   "extends": ["standard-with-typescript", "prettier"],
   "plugins": ["prettier"],
   "overrides": [],
   "parserOptions": {
+    "extraFileExtensions": [".json"],
     "ecmaVersion": "latest",
     "sourceType": "module",
-    "project": ["./tsconfig.json"]
+    "project": ["./tsconfig.json", "./tsconfig.prod.json"]
   },
   "rules": {
     "prettier/prettier": ["error"],
