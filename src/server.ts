@@ -4,8 +4,8 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 import errorHandler from './utils/error.handler';
-import ticketRoutes from './routes/ticket.route';
-import healthRoutes from './routes/health.route';
+import { registerTicketRoutes } from './routes/ticket.route';
+import { registerHealthRoutes } from './routes/health.route';
 
 const { APP_PORT = '3000' } = process.env;
 
@@ -22,10 +22,10 @@ const start = async (): Promise<void> => {
     app.use(express.json());
 
     // Register a health check route, to be used inside docker
-    healthRoutes(app);
+    registerHealthRoutes(app);
 
     // Registering all app routes
-    ticketRoutes(app);
+    registerTicketRoutes(app);
 
     // Register the error handler
     app.use(errorHandler);
