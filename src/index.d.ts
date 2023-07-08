@@ -1,4 +1,4 @@
-import { type ITicket } from '../models/ticket.model';
+import { type ITicket } from './models/ticket.model';
 
 // to make the file a module and avoid the TypeScript error
 export {};
