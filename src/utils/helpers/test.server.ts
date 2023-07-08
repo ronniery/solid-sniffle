@@ -1,5 +1,5 @@
 import express, { type Express } from 'express';
-import errorHandler from '../utils/error.handler';
+import errorHandler from '../error.handler';
 
 type TestRoutes = (server: Express) => void;
 

@@ -4,10 +4,10 @@ import { type Express } from 'express';
 import { orderBy, isArray, size } from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 
-import { factory } from '../@helpers/factories';
-import { createTestHost } from '../@helpers/test.server';
-import ticketModel, { type TicketStatus, type ITicket } from '../models/ticket.model';
-import routes from '../routes/ticket.route';
+import { factory } from '@/utils/helpers/factories';
+import { createTestHost } from '@/utils/helpers/test.server';
+import ticketModel, { type TicketStatus, type ITicket } from '@/models/ticket.model';
+import routes from '@/routes/ticket.route';
 
 // Not compatible with ES6 import/export
 // eslint-disable-next-line @typescript-eslint/no-var-requires

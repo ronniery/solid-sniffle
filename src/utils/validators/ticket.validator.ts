@@ -3,7 +3,7 @@ import date from 'date-and-time';
 import { type NextFunction, type Request, type Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { type TicketStatus, type ITicket } from '../../models/ticket.model';
+import { type TicketStatus, type ITicket } from '@/models/ticket.model';
 import ApiError from '../api.error';
 
 const _validateWithSchema = (schema: Joi.Schema, target: Record<string, unknown> | string | number): void => {

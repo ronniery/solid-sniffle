@@ -1,8 +1,8 @@
 import { type Express } from 'express';
 import asyncHandler from 'express-async-handler';
 
-import { validateTicketCreation, validateTicketUpdate } from '../utils/validators/ticket.validator';
-import * as ticketController from '../controllers/ticket.controller';
+import { validateTicketCreation, validateTicketUpdate } from '@/utils/validators/ticket.validator';
+import * as ticketController from '@/controllers/ticket.controller';
 
 const prefix = '/tickets';
 

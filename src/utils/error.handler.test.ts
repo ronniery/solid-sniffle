@@ -2,8 +2,8 @@ import { type Request, type Response, type NextFunction } from 'express';
 import { type MockRequest, createRequest, type MockResponse, createResponse } from 'node-mocks-http';
 import { StatusCodes, getReasonPhrase } from 'http-status-codes';
 
-import errorHandler from '../../utils/error.handler';
-import ApiError from '../../utils/api.error';
+import errorHandler from '@/utils/error.handler';
+import ApiError from '@/utils/api.error';
 
 describe('Error Handler', () => {
   let request: MockRequest<Request>;

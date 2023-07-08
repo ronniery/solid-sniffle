@@ -1,8 +1,8 @@
 import { type Request, type Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { getAll, update, add } from '../services/ticket.service';
-import ApiError from '../utils/api.error';
+import { getAll, update, add } from '@/services/ticket.service';
+import ApiError from '@/utils/api.error';
 
 // GET /tickets
 export const getAllTickets = async (_req: Request, res: Response): Promise<void> => {

@@ -1,0 +1,27 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true,
+
+    "node_modules": true,
+    "dist": false,
+    ".dockerignore": true,
+    ".editorconfig": true,
+    ".gitignore": true,
+    ".prettierignore": true,
+    ".prettierrc": true,
+    ".tool-versions": true,
+    ".eslint": true,
+    "**/*.test.ts": true,
+    "package-lock.json": true,
+    "Dockerfile": true,
+    "jest.config.js": true,
+    "tsconfig.json": true,
+    "nodemon.json": true,
+    "yarn.lock": true
+  }
+}

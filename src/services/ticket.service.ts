@@ -1,5 +1,5 @@
 import { type Types } from 'mongoose';
-import Ticket, { type ITicketDocument, type ITicket } from '../models/ticket.model';
+import Ticket, { type ITicketDocument, type ITicket } from '@/models/ticket.model';
 
 export const getAll = async (): Promise<ITicketDocument[]> => await Ticket.find({}).sort({ deadline: 'descending' });
 

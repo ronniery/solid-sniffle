@@ -8,7 +8,7 @@ import {
 } from 'node-mocks-http';
 
 import { validateTicketCreation, validateTicketUpdate } from './ticket.validator';
-import { type TicketStatus } from '../../models/ticket.model';
+import { type TicketStatus } from '@/models/ticket.model';
 import ApiError from '../api.error';
 
 interface ExpressActions {

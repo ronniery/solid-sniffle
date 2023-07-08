@@ -1,9 +1,9 @@
 import { orderBy, random, size } from 'lodash';
 
-import { connect, disconnect, dropCollections } from '../@helpers/test.db';
-import TicketModel, { type ITicketDocument, type ITicket, type TicketStatus } from '../models/ticket.model';
+import { connect, disconnect, dropCollections } from '@/utils/helpers/test.db';
+import TicketModel, { type ITicketDocument, type ITicket, type TicketStatus } from '@/models/ticket.model';
 import { getAll, add, update } from './ticket.service';
-import { factory } from '../@helpers/factories';
+import { factory } from '@/utils/helpers/factories';
 
 describe('Ticket Service', () => {
   beforeAll(async () => {
