@@ -6,8 +6,8 @@ import { StatusCodes } from 'http-status-codes';
 
 import { factory } from '@/utils/helpers/factories';
 import { createTestHost } from '@/utils/helpers/test.server';
-import ticketModel, { type TicketStatus, type ITicket } from '@/models/ticket.model';
-import routes from '@/routes/ticket.route';
+import TicketModel, { type TicketStatus, type ITicket } from '@/models/ticket.model';
+import { registerTicketRoutes } from '@/routes/ticket.route';
 
 // Not compatible with ES6 import/export
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -25,7 +25,7 @@ describe('Ticket Controller', () => {
   let modelMock: { reset: () => void } | undefined;
 
   beforeEach(async () => {
-    server = await createTestHost(routes);
+    server = await createTestHost(registerTicketRoutes);
   });
 
   afterEach(() => {
@@ -54,7 +54,7 @@ describe('Ticket Controller', () => {
       const ticket = factory.ticket.build();
 
       // Mock model result
-      modelMock = mockingoose(ticketModel).toReturn([ticket], 'find');
+      modelMock = mockingoose(TicketModel).toReturn([ticket], 'find');
 
       const { body } = await getAllTickets();
 
@@ -82,7 +82,7 @@ describe('Ticket Controller', () => {
       );
 
       // Mock model result
-      modelMock = mockingoose(ticketModel).toReturn(_tickets, 'find');
+      modelMock = mockingoose(TicketModel).toReturn(_tickets, 'find');
 
       const { body } = await getAllTickets();
 
@@ -102,7 +102,7 @@ describe('Ticket Controller', () => {
 
       const descOrderedTickets = orderBy(_tickets, 'deadline', 'desc');
 
-      modelMock = mockingoose(ticketModel).toReturn(descOrderedTickets, 'find');
+      modelMock = mockingoose(TicketModel).toReturn(descOrderedTickets, 'find');
 
       const { body } = await getAllTickets();
 
@@ -326,7 +326,7 @@ describe('Ticket Controller', () => {
     });
 
     it('should update a ticket by ID', async () => {
-      modelMock = mockingoose(ticketModel).toReturn((query: any) => {
+      modelMock = mockingoose(TicketModel).toReturn((query: any) => {
         return 'test';
       });
 

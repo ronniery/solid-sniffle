@@ -8,9 +8,9 @@ describe('ApiError', () => {
     expect(error.message).toBe(errorMessage);
   });
 
-  it('should set the default status code if not provided', () => {
+  it('should return status as undefined if not provided', () => {
     const error = new ApiError('Error without status code');
-    expect(error.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+    expect(error.status).toBeUndefined();
   });
 
   it('should set the provided status code', () => {
@@ -35,7 +35,7 @@ describe('ApiError', () => {
     expect(error instanceof Error).toBeTruthy();
   });
 
-  it('should create an ApiError without message', () => {
+  it('should create an ApiError with empty message', () => {
     const error = new ApiError();
     expect(error.message).toBe('');
   });
