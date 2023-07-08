@@ -5,11 +5,7 @@ import { Types } from 'mongoose';
 
 import { type ITicket } from '@/models/ticket.model';
 
-interface TicketTransientParams {
-  _id: string;
-}
-
-const ticket = Factory.define<ITicket, TicketTransientParams>(() => {
+const withoutId = Factory.define<Omit<ITicket, '_id'>>(() => {
   const lastDays = date.addDays(new Date(), -2);
   const nextDays = date.addDays(new Date(), 2);
 
@@ -18,8 +14,14 @@ const ticket = Factory.define<ITicket, TicketTransientParams>(() => {
     status: faker.datatype.boolean() ? 'open' : 'closed',
     issue: faker.lorem.lines({ min: 1, max: 3 }),
     deadline: faker.date.between({ from: lastDays, to: nextDays }).toISOString(),
-    _id: new Types.ObjectId(),
   };
 });
+
+const withId = Factory.define<ITicket>(() => ({
+  ...withoutId.build(),
+  _id: new Types.ObjectId(),
+}));
+
+const ticket = { withId, withoutId };
 
 export const factory = { ticket };

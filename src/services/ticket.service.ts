@@ -4,6 +4,6 @@ import Ticket, { type ITicketDocument, type ITicket } from '@/models/ticket.mode
 export const getAll = async (): Promise<ITicketDocument[]> => await Ticket.find({}).sort({ deadline: 'descending' });
 
 export const update = async (ticketId: string | Types.ObjectId, newTicket: ITicket): Promise<ITicketDocument | null> =>
-  await Ticket.findOneAndUpdate({ _id: ticketId }, newTicket, { new: true });
+  await Ticket.findByIdAndUpdate({ _id: ticketId }, newTicket, { new: true });
 
 export const add = async (ticket: ITicket): Promise<ITicketDocument> => await Ticket.create(ticket);

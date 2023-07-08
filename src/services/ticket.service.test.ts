@@ -23,7 +23,7 @@ describe('Ticket Service', () => {
 
     beforeEach(async () => {
       const numberOfTickets = random(5, 20, false);
-      const factoryTickets = factory.ticket.buildList(numberOfTickets);
+      const factoryTickets = factory.ticket.withId.buildList(numberOfTickets);
 
       await TicketModel.insertMany(factoryTickets);
 
@@ -61,7 +61,7 @@ describe('Ticket Service', () => {
 
   describe('findAndUpdate', () => {
     it('should find and update a ticket with the new ticket data', async () => {
-      const oldTicket = factory.ticket.build();
+      const oldTicket = factory.ticket.withId.build();
       const nextTicket: ITicket = {
         ...oldTicket,
         status: 'illegal' as TicketStatus,
@@ -81,7 +81,7 @@ describe('Ticket Service', () => {
 
   describe('createNew', () => {
     it('should create a new ticket', async () => {
-      const ticket: ITicket = factory.ticket.build();
+      const ticket: ITicket = factory.ticket.withId.build();
       const createdTicket = await add(ticket);
       const foundTicket = await TicketModel.findOne({ _id: createdTicket._id });
 

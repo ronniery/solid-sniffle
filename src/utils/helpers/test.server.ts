@@ -1,6 +1,6 @@
 import express, { type Express } from 'express';
 import errorHandler from '../error.handler';
-import { isEmpty } from 'lodash';
+import { isNil } from 'lodash';
 
 type TestRoutes = (server: Express) => void;
 
@@ -10,7 +10,7 @@ const createTestHost = async (routes?: TestRoutes): Promise<Express> => {
   // Configuring express app
   server.use(express.json());
 
-  if (!isEmpty(routes)) {
+  if (!isNil(routes)) {
     // Load the test routes
     routes(server);
   }
