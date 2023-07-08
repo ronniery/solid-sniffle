@@ -3,9 +3,7 @@ import Ticket, { type ITicketDocument, type ITicket } from '../models/ticket.mod
 
 export const getAll = async (): Promise<ITicketDocument[]> => await Ticket.find({}).sort({ deadline: 'descending' });
 
-export const findAndUpdate = async (
-  ticketId: string | Types.ObjectId,
-  newTicket: ITicket
-): Promise<ITicketDocument | null> => await Ticket.findOneAndUpdate({ _id: ticketId }, newTicket, { new: true });
+export const update = async (ticketId: string | Types.ObjectId, newTicket: ITicket): Promise<ITicketDocument | null> =>
+  await Ticket.findOneAndUpdate({ _id: ticketId }, newTicket, { new: true });
 
-export const createNew = async (ticket: ITicket): Promise<ITicketDocument> => await Ticket.create(ticket);
+export const add = async (ticket: ITicket): Promise<ITicketDocument> => await Ticket.create(ticket);

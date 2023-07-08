@@ -2,7 +2,7 @@ import { orderBy, random, size } from 'lodash';
 
 import { connect, disconnect, dropCollections } from '../@helpers/setup.db';
 import TicketModel, { type ITicketDocument, type ITicket, type TicketStatus } from '../../models/ticket.model';
-import { getAll, createNew, findAndUpdate } from '../../services/ticket.service';
+import { getAll, add, update } from '../../services/ticket.service';
 import { factory } from '../@helpers/fixtures/factory';
 
 describe('Ticket Service', () => {
@@ -71,7 +71,7 @@ describe('Ticket Service', () => {
       };
 
       await TicketModel.create(oldTicket);
-      const updatedTicket = await findAndUpdate(nextTicket._id, nextTicket);
+      const updatedTicket = await update(nextTicket._id, nextTicket);
 
       expect(updatedTicket).toBeDefined();
       expect(updatedTicket?.toJSON()).toEqual(nextTicket);
@@ -82,7 +82,7 @@ describe('Ticket Service', () => {
   describe('createNew', () => {
     it('should create a new ticket', async () => {
       const ticket: ITicket = factory.ticket.build();
-      const createdTicket = await createNew(ticket);
+      const createdTicket = await add(ticket);
       const foundTicket = await TicketModel.findOne({ _id: createdTicket._id });
 
       expect(foundTicket).toBeDefined();
