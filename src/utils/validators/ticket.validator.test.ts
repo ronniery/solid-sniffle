@@ -7,9 +7,9 @@ import {
   type MockResponse,
 } from 'node-mocks-http';
 
-import { validateTicketCreation, validateTicketUpdate } from '../../validators/ticket.validator';
+import { validateTicketCreation, validateTicketUpdate } from './ticket.validator';
 import { type TicketStatus } from '../../models/ticket.model';
-import ApiError from '../../utils/api.error';
+import ApiError from '../api.error';
 
 interface ExpressActions {
   request: MockRequest<Request>;

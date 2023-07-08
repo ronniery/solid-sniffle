@@ -2,7 +2,7 @@ import { Factory } from 'fishery';
 import { faker } from '@faker-js/faker';
 import date from 'date-and-time';
 
-import { type ITicket } from '../../../models/ticket.model';
+import { type ITicket } from '../models/ticket.model';
 import { Types } from 'mongoose';
 
 interface TicketTransientParams {

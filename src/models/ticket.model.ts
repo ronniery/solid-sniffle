@@ -11,7 +11,7 @@ export interface ITicket {
 }
 
 // eslint-disable-next-line prettier/prettier
-export interface ITicketDocument extends Document { }
+export interface ITicketDocument extends Document {}
 
 const TicketSchema: Schema = new Schema(
   {
