@@ -34,4 +34,9 @@ describe('ApiError', () => {
     const error = new ApiError('Any error');
     expect(error instanceof Error).toBeTruthy();
   });
+
+  it('should create an ApiError without message', () => {
+    const error = new ApiError();
+    expect(error.message).toBe('');
+  });
 });
