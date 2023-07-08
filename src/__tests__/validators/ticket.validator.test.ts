@@ -8,8 +8,8 @@ import {
 } from 'node-mocks-http';
 
 import { validateTicketCreation, validateTicketUpdate } from '../../validators/ticket.validator';
+import { type TicketStatus } from '../../models/ticket.model';
 import ApiError from '../../utils/api.error';
-import { Status } from '../../models/ticket.model';
 
 interface ExpressActions {
   request: MockRequest<Request>;
@@ -64,7 +64,7 @@ describe('Ticket Validators', () => {
       const { request, response, next } = createExpressActions({
         body: {
           ticket: {
-            status: Status.OPEN,
+            status: 'open' as TicketStatus,
           },
         },
         params: {
@@ -82,7 +82,7 @@ describe('Ticket Validators', () => {
       const { request, response, next } = createExpressActions({
         body: {
           ticket: {
-            status: Status.OPEN,
+            status: 'open' as TicketStatus,
           },
         },
         params: {

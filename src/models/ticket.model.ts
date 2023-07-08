@@ -1,19 +1,17 @@
-import mongoose, { Schema, type Document } from 'mongoose';
+import mongoose, { Schema, type Document, type Types } from 'mongoose';
 
-export enum Status {
-  OPEN = 'open',
-  CLOSED = 'closed',
-}
+export type TicketStatus = 'open' | 'closed';
 
 export interface ITicket {
-  _id?: string;
+  _id: string | Types.ObjectId;
   client: string;
   issue: string;
-  status: Status;
+  status: TicketStatus;
   deadline: string;
 }
 
-export interface ITicketDocument extends Document {}
+// eslint-disable-next-line prettier/prettier
+export interface ITicketDocument extends Document { }
 
 const TicketSchema: Schema = new Schema(
   {
@@ -27,8 +25,8 @@ const TicketSchema: Schema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: Status,
-      default: Status.OPEN,
+      enum: ['open', 'closed'] as TicketStatus[],
+      default: 'open' as TicketStatus,
     },
   },
   {
