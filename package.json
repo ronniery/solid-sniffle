@@ -9,8 +9,9 @@
     "lint": "npx eslint . --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "npx eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "clean": "rm -rf dist",
-    "build": "npm run clean && tsc -p .",
-    "test": "jest --watchAll --no-cache --runInBand --detectOpenHandles"
+    "build": "npm run clean && tsc -p tsconfig.prod.json",
+    "test": "jest --watchAll --no-cache --runInBand --detectOpenHandles",
+    "prepare": "ts-patch install -s"
   },
   "keywords": [],
   "author": "",
@@ -45,7 +46,8 @@
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
     "ts-patch": "^3.0.1",
-    "typescript": "^5.1.0"
+    "typescript": "^5.1.0",
+    "typescript-transform-paths": "^3.4.6"
   },
   "dependencies": {
     "date-and-time": "^3.0.2",

@@ -16,11 +16,11 @@
     ".prettierrc": true,
     ".tool-versions": true,
     ".eslint": true,
-    "**/*.test.ts": true,
+    "**/*.test.ts": false,
     "package-lock.json": true,
     "Dockerfile": true,
     "jest.config.js": true,
-    "tsconfig.json": true,
+    "tsconfig.json": false,
     "nodemon.json": true,
     "yarn.lock": true
   }
