@@ -4,9 +4,9 @@ import { type Express } from 'express';
 import { orderBy, isArray, size } from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 
-import { factory } from '../@fixtures/factory';
+import { factory } from '../@helpers/fixtures/factory';
 import { createTestHost } from '../test.server';
-import ticketModel, { type ITicket, type Status } from '../../models/ticket.model';
+import ticketModel, { type TicketStatus, type ITicket } from '../../models/ticket.model';
 import routes from '../../routes/ticket.route';
 
 // Not compatible with ES6 import/export
@@ -261,7 +261,7 @@ describe('Ticket Controller', () => {
 
     it('should return errors if ticket status is not valid', async () => {
       // Status has an invalid value
-      const ticket = factory.ticket.build({ status: 'test' as Status });
+      const ticket = factory.ticket.build({ status: 'test' as TicketStatus });
 
       await createTicketFaulty(
         { ticket },

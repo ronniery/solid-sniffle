@@ -3,7 +3,7 @@ import date from 'date-and-time';
 import { type NextFunction, type Request, type Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-import { type ITicket, Status } from '../models/ticket.model';
+import { type TicketStatus, type ITicket } from '../models/ticket.model';
 import ApiError from '../utils/api.error';
 
 const _validateWithSchema = (schema: Joi.Schema, target: Record<string, unknown> | string | number): void => {
@@ -24,7 +24,7 @@ export const validateTicketCreation = (req: Request, _res: Response, next: NextF
     ticket: Joi.object<ITicket>({
       client: Joi.string().min(2).max(80).required(),
       issue: Joi.string().min(10).max(450).required(),
-      status: Joi.string().optional().valid(Status.OPEN, Status.CLOSED).default(Status.OPEN),
+      status: Joi.string<TicketStatus>().optional().valid('open', 'closed').default('open'),
       deadline: Joi.date().optional().greater(lastTwoDays).less(nextTwoDays).default(new Date().toISOString()),
     })
       .required()
@@ -54,7 +54,7 @@ export const validateTicketUpdate = (req: Request, _res: Response, next: NextFun
 
   // Check if the `req.body` ticket contains a valid status
   const ticketOnBody = Joi.object({
-    status: Joi.string().required().valid(Status.OPEN, Status.CLOSED),
+    status: Joi.string<TicketStatus>().required().valid('open', 'closed'),
   }).options({ allowUnknown: false });
 
   _validateWithSchema(ticketOnBody, ticket);
