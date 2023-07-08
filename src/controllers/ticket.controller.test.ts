@@ -1,49 +1,61 @@
 import request, { type Response } from 'supertest';
-import { Types } from 'mongoose';
 import { type Express } from 'express';
-import { orderBy, isArray, size } from 'lodash';
+import { orderBy, isArray, size, random, get } from 'lodash';
 import { StatusCodes } from 'http-status-codes';
 
 import { factory } from '@/utils/helpers/factories';
 import { createTestHost } from '@/utils/helpers/test.server';
 import TicketModel, { type TicketStatus, type ITicket } from '@/models/ticket.model';
 import { registerTicketRoutes } from '@/routes/ticket.route';
-
-// Not compatible with ES6 import/export
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const mockingoose = require('mockingoose');
-
-type Payload = Partial<ITicket> | Record<string, unknown> | undefined | null;
+import { connect, disconnect, dropCollections } from '@/utils/helpers/test.db';
 
 interface CreateFaultyTicketOptions {
   message: string | RegExp;
   status: number;
 }
 
+const createTicket = async (server: Express, payload: Partial<Record<string, unknown>>): Promise<Response> =>
+  await request(server)
+    .post('/tickets')
+    .set('Content-Type', 'application/json')
+    .set('Accept', 'application/json')
+    .send(payload as object);
+
 describe('Ticket Controller', () => {
   let server: Express;
-  let modelMock: { reset: () => void } | undefined;
 
   beforeEach(async () => {
     server = await createTestHost(registerTicketRoutes);
   });
 
-  afterEach(() => {
-    modelMock?.reset();
+  beforeAll(async () => {
+    await connect();
   });
 
-  const createTicket = async (payload: Payload): Promise<Response> =>
-    await request(server)
-      .post('/tickets')
-      .set('Content-Type', 'application/json')
-      .set('Accept', 'application/json')
-      .send(payload as object);
+  afterAll(async () => {
+    await disconnect();
+  });
+
+  afterEach(async () => {
+    await dropCollections();
+  });
 
   describe('(get) All tickets on route /tickets', () => {
     const getAllTickets = async (): Promise<Response> =>
       await request(server).get('/tickets').expect('Content-Type', /json/).expect(StatusCodes.OK);
 
+    let tickets: Array<Partial<ITicket>> = [];
+
+    beforeEach(async () => {
+      tickets = factory.ticket.withId.buildList(random(3, 20, false));
+
+      await TicketModel.insertMany(tickets);
+    });
+
     it('should get empty array of tickets', async () => {
+      // Let's first remove everything inside database;
+      await TicketModel.deleteMany();
+
       const { body } = await getAllTickets();
 
       expect(body.tickets).toBeDefined();
@@ -51,14 +63,9 @@ describe('Ticket Controller', () => {
     });
 
     it('should expect tickets to have the right properties', async () => {
-      const ticket = factory.ticket.build();
-
-      // Mock model result
-      modelMock = mockingoose(TicketModel).toReturn([ticket], 'find');
-
       const { body } = await getAllTickets();
 
-      expect(size(body.tickets)).toEqual(1);
+      expect(size(body.tickets)).toBe(size(tickets));
       expect(body.tickets).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
@@ -72,49 +79,26 @@ describe('Ticket Controller', () => {
       );
     });
 
-    it('should get all available tickets, unsorted', async () => {
-      const _tickets = factory.ticket.buildList(
-        5,
-        {},
-        {
-          transient: { _id: new Types.ObjectId().toString() },
-        }
-      );
-
-      // Mock model result
-      modelMock = mockingoose(TicketModel).toReturn(_tickets, 'find');
-
-      const { body } = await getAllTickets();
-
-      expect(body.tickets).toBeDefined();
-      expect(size(body.tickets)).toEqual(size(_tickets));
-      expect(body.tickets).toEqual(expect.arrayContaining(_tickets));
-    });
-
     it('should get all available tickets, sorted descending by date', async () => {
-      const _tickets = factory.ticket.buildList(
-        5,
-        {},
-        {
-          transient: { _id: new Types.ObjectId().toString() },
-        }
-      );
-
-      const descOrderedTickets = orderBy(_tickets, 'deadline', 'desc');
-
-      modelMock = mockingoose(TicketModel).toReturn(descOrderedTickets, 'find');
+      const descOrderedTickets = orderBy(tickets, 'deadline', 'desc').map(({ _id, ...ticket }) => ({
+        ...ticket,
+        _id: _id?.toString(),
+      }));
 
       const { body } = await getAllTickets();
 
       expect(body.tickets).toBeDefined();
-      expect(body.tickets).not.toStrictEqual(_tickets);
+      expect(body.tickets).not.toStrictEqual(tickets);
       expect(body.tickets).toStrictEqual(descOrderedTickets);
     });
   });
 
   describe('(post) Create tickets on route /tickets', () => {
-    const createTicketFaulty = async (payload: Payload, options: CreateFaultyTicketOptions): Promise<void> => {
-      const response = await createTicket(payload);
+    const createTicketFaulty = async (
+      payload: Partial<Record<string, unknown>>,
+      options: CreateFaultyTicketOptions
+    ): Promise<void> => {
+      const response = await createTicket(server, payload);
       const { message, status } = options;
       const { body, error, status: httpStatus, type } = response;
 
@@ -135,7 +119,7 @@ describe('Ticket Controller', () => {
     };
 
     const createTicketSuccessfully = async (ticket: Partial<ITicket>): Promise<Response> => {
-      const response = await createTicket({ ticket });
+      const response = await createTicket(server, { ticket });
 
       expect(response.status).toBe(StatusCodes.CREATED);
       expect(response.type).toBe('application/json');
@@ -144,7 +128,7 @@ describe('Ticket Controller', () => {
     };
 
     it('should create a new ticket', async () => {
-      const ticket = factory.ticket.build();
+      const ticket = factory.ticket.withoutId.build();
       const { body, status } = await createTicketSuccessfully(ticket);
 
       expect(status).toBe(StatusCodes.CREATED);
@@ -161,30 +145,30 @@ describe('Ticket Controller', () => {
           status: StatusCodes.BAD_REQUEST,
         }
       );
-    }, 900000);
+    });
 
     it('should return error if body has not allowed properties', async () => {
-      const badTicket: Payload = { name: 'test', action: 'jest' };
+      const badTicket = { name: 'test', action: 'jest' };
 
       await createTicketFaulty(badTicket, {
         message: '"ticket" is required',
         status: StatusCodes.BAD_REQUEST,
       });
-    }, 90000);
+    });
 
     it('should return error if body has not allowed properties, and ticket property', async () => {
-      const ticket = factory.ticket.build();
-      const badTicket: Payload = { name: 'test', ticket };
+      const ticket = factory.ticket.withoutId.build();
+      const badTicket = { name: 'test', ticket };
 
       await createTicketFaulty(badTicket, {
         message: '"name" is not allowed',
         status: StatusCodes.BAD_REQUEST,
       });
-    }, 90000);
+    });
 
     it('should return errors if ticket client name is not valid', async () => {
       // Client name does not exists
-      let { client, ...ticket } = factory.ticket.build();
+      let { client, ...ticket } = factory.ticket.withoutId.build();
 
       await createTicketFaulty(
         { ticket },
@@ -195,7 +179,7 @@ describe('Ticket Controller', () => {
       );
 
       // Client name is smaller than 1 [length]
-      ticket = factory.ticket.build({ client: 'a' });
+      ticket = factory.ticket.withoutId.build({ client: 'a' });
 
       await createTicketFaulty(
         { ticket },
@@ -206,7 +190,7 @@ describe('Ticket Controller', () => {
       );
 
       // Client name is bigger than 80 [length]
-      ticket = factory.ticket.build({ client: 'a'.padEnd(95, 'a') });
+      ticket = factory.ticket.withoutId.build({ client: 'a'.padEnd(95, 'a') });
 
       await createTicketFaulty(
         { ticket },
@@ -219,7 +203,7 @@ describe('Ticket Controller', () => {
 
     it('should return errors if ticket issue is not valid', async () => {
       // Issue does not exists
-      let { issue, ...ticket } = factory.ticket.build();
+      let { issue, ...ticket } = factory.ticket.withoutId.build();
 
       await createTicketFaulty(
         { ticket },
@@ -230,7 +214,7 @@ describe('Ticket Controller', () => {
       );
 
       // Client name is smaller than 10 [length]
-      ticket = factory.ticket.build({ issue: 'aaaaaaa' });
+      ticket = factory.ticket.withoutId.build({ issue: 'aaaaaaa' });
 
       await createTicketFaulty(
         { ticket },
@@ -241,7 +225,7 @@ describe('Ticket Controller', () => {
       );
 
       // Client name is bigger than 450 [length]
-      ticket = factory.ticket.build({ issue: 'a'.padEnd(500, 'a') });
+      ticket = factory.ticket.withoutId.build({ issue: 'a'.padEnd(500, 'a') });
 
       await createTicketFaulty(
         { ticket },
@@ -254,14 +238,14 @@ describe('Ticket Controller', () => {
 
     it('should create ticket if its status does not exists', async () => {
       // Status does not exists inside ticket
-      const { status, ...ticket } = factory.ticket.build();
+      const { status, ...ticket } = factory.ticket.withoutId.build();
 
       await createTicketSuccessfully(ticket);
     });
 
     it('should return errors if ticket status is not valid', async () => {
       // Status has an invalid value
-      const ticket = factory.ticket.build({ status: 'test' as TicketStatus });
+      const ticket = factory.ticket.withoutId.build({ status: 'test' as TicketStatus });
 
       await createTicketFaulty(
         { ticket },
@@ -274,14 +258,14 @@ describe('Ticket Controller', () => {
 
     it('should create ticket if its deadline does not exists', async () => {
       // Deadline does not exists inside ticket
-      const { deadline, ...ticket } = factory.ticket.build();
+      const { deadline, ...ticket } = factory.ticket.withoutId.build();
 
       await createTicketSuccessfully(ticket);
     });
 
     it('should return errors if ticket deadline is not valid', async () => {
       // Deadline has an invalid value
-      let ticket = factory.ticket.build({ deadline: 'test' });
+      let ticket = factory.ticket.withoutId.build({ deadline: 'test' });
 
       await createTicketFaulty(
         { ticket },
@@ -292,7 +276,7 @@ describe('Ticket Controller', () => {
       );
 
       // Deadline is too old
-      ticket = factory.ticket.build({ deadline: new Date('1980-01-01').toISOString() });
+      ticket = factory.ticket.withoutId.build({ deadline: new Date('1980-01-01').toISOString() });
 
       await createTicketFaulty(
         { ticket },
@@ -303,7 +287,7 @@ describe('Ticket Controller', () => {
       );
 
       // Deadline is too far in future
-      ticket = factory.ticket.build({ deadline: new Date('2099-01-01').toISOString() });
+      ticket = factory.ticket.withoutId.build({ deadline: new Date('2099-01-01').toISOString() });
 
       await createTicketFaulty(
         { ticket },
@@ -316,45 +300,58 @@ describe('Ticket Controller', () => {
   });
 
   describe('(put) Update ticket on route /tickets/:id', () => {
-    let createdTicket: Payload;
+    let createdTicket: ITicket;
 
     beforeEach(async () => {
-      const ticket = factory.ticket.build();
-      const { body } = await createTicket(ticket);
+      const ticket = factory.ticket.withoutId.build();
+      const { body } = await createTicket(server, { ticket });
 
       createdTicket = body;
     });
 
     it('should update a ticket by ID', async () => {
-      modelMock = mockingoose(TicketModel).toReturn((query: any) => {
-        return 'test';
-      });
+      const ticketId = get<ITicket, string>(createdTicket, '_id').toString();
+      const response = await request(server)
+        .put('/tickets/'.concat(ticketId))
+        .send({
+          ticket: {
+            status: 'closed',
+          },
+        });
 
-      console.log(createdTicket);
-      // .toReturn({ answer: "puta que pariu" }, 'findOneAndUpdate');
+      expect(response.status).toBe(StatusCodes.OK);
+      expect(response.body).toBeDefined();
 
-      // const response = await request(server)
-      //   .put(`/tickets/${createdTicket?._id}`)
-      //   .send({
-      //     ticket: {
-      //       status: Status.CLOSED,
-      //     },
-      //   });
+      expect(response.body).toHaveProperty('client', createdTicket.client);
+      expect(response.body).toHaveProperty('issue', createdTicket.issue);
+      expect(response.body).toHaveProperty('deadline', createdTicket.deadline);
+      expect(response.body).toHaveProperty('_id', createdTicket._id);
+    });
 
-      // expect(response.status).toBe(StatusCodes.OK);
-      // expect(response.body).toBeDefined();
-      // Add more assertions based on the expected response
-    }, 900000);
-  });
+    it('should return an error, if we pass an invalid ID', async () => {
+      const response = await request(server)
+        .put('/tickets/invalid')
+        .send({
+          ticket: {
+            status: 'closed',
+          },
+        });
 
-  it('should throw an error if ticket is not found during update', async () => {
-    const id = 'nonexistent-id'; // Provide a nonexistent ticket ID
-    const newTicket = {
-      /* Provide updated ticket data */
-    };
-    const response = await request(server).put(`/tickets/${id}`).send({ ticket: newTicket });
-    expect(response.status).toBe(StatusCodes.NOT_FOUND);
-    expect(response.body.error).toBeDefined();
-    // Add more assertions based on the expected error response
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      expect(response.body.error).toBe('"value" length must be at least 24 characters long');
+    });
+
+    it('should return an error, if we pass an ObjectID invalid', async () => {
+      const response = await request(server)
+        .put('/tickets/507f191e810c19729de81111')
+        .send({
+          ticket: {
+            status: 'closed',
+          },
+        });
+
+      expect(response.status).toBe(StatusCodes.NOT_FOUND);
+      expect(response.body.error).toBe('Ticket not found');
+    });
   });
 });
