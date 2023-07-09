@@ -17,7 +17,7 @@
     "no-tabs": [
       "error",
       {
-        "allowIndentationTabs": true
+        "allowIndentationTabs": false
       }
     ],
     "max-len": [

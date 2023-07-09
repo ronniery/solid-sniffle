@@ -23,7 +23,7 @@ COPY --from=build-stage /app/package.json ./
 
 # Install the necessary dependencies
 RUN apt-get update && apt-get install -y curl && \
-    npm install --omit=dev && npm install -g cross-env
+    npm install --omit=dev --ignore-scripts && npm install -g cross-env
 
 # Set the health check condition
 HEALTHCHECK --interval=30s --timeout=3s \
