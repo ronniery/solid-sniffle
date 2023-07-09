@@ -2,7 +2,7 @@ import { orderBy, random, size } from 'lodash';
 
 import { connect, disconnect, dropCollections } from '@/utils/helpers/test.db';
 import TicketModel, { type ITicketDocument, type ITicket, type TicketStatus } from '@/models/ticket.model';
-import { getAll, add, update } from './ticket.service';
+import { getAllTickets, createTicket, updateTicket } from './ticket.service';
 import { factory } from '@/utils/helpers/factories';
 
 describe('Ticket Service', () => {
@@ -34,7 +34,7 @@ describe('Ticket Service', () => {
       documents.map((document) => document.toJSON());
 
     it('should return all tickets in a natural order', async () => {
-      const allTickets = await getAll().then(convertDocumentsToTickets);
+      const allTickets = await getAllTickets().then(convertDocumentsToTickets);
 
       expect(size(allTickets)).toEqual(size(tickets));
       expect(allTickets).toEqual(
@@ -51,7 +51,7 @@ describe('Ticket Service', () => {
 
     it('should return all tickets in descending order of deadline', async () => {
       const orderedTickets = orderBy(tickets, 'deadline', 'desc');
-      const allTickets = await getAll().then(convertDocumentsToTickets);
+      const allTickets = await getAllTickets().then(convertDocumentsToTickets);
 
       expect(size(allTickets)).toEqual(size(tickets));
       expect(allTickets).not.toEqual(tickets);
@@ -71,7 +71,7 @@ describe('Ticket Service', () => {
       };
 
       await TicketModel.create(oldTicket);
-      const updatedTicket = await update(nextTicket._id, nextTicket);
+      const updatedTicket = await updateTicket(nextTicket._id, nextTicket);
 
       expect(updatedTicket).toBeDefined();
       expect(updatedTicket?.toJSON()).toEqual(nextTicket);
@@ -82,7 +82,7 @@ describe('Ticket Service', () => {
   describe('createNew', () => {
     it('should create a new ticket', async () => {
       const ticket: ITicket = factory.ticket.withId.build();
-      const createdTicket = await add(ticket);
+      const createdTicket = await createTicket(ticket);
       const foundTicket = await TicketModel.findOne({ _id: createdTicket._id });
 
       expect(foundTicket).toBeDefined();
