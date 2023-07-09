@@ -41,4 +41,4 @@ jobs:
         with:
           context: "{{defaultContext}}"
           push: true
-          tags: rbcorrea/${{ github.repository }}:${{ github.sha }}
+          tags: rbcorrea/solid-sniffle:latest, rbcorrea/solid-sniffle:${{ github.sha }}
