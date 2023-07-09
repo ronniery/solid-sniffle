@@ -1,4 +1,5 @@
 import 'dotenv-defaults/config';
+import cors from 'cors';
 import express from 'express';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -19,6 +20,7 @@ const start = async (): Promise<void> => {
     // Creating the express app
     const app = express();
     app.use(express.json());
+    app.use(cors());
 
     // Register all application routes
     [registerSwaggerRoutes, registerHealthRoutes, registerTicketRoutes].forEach((route) => {
