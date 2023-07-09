@@ -2,12 +2,9 @@ import 'dotenv-defaults/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import swaggerUI from 'swagger-ui-express';
-import swaggerDocument from './swagger.json';
 
 import errorHandler from './utils/error.handler';
-import { registerTicketRoutes } from './routes/ticket.route';
-import { registerHealthRoutes } from './routes/health.route';
+import { registerTicketRoutes, registerHealthRoutes, registerSwaggerRoutes } from './routes';
 
 const { APP_PORT = '3000' } = process.env;
 
@@ -22,13 +19,11 @@ const start = async (): Promise<void> => {
     // Creating the express app
     const app = express();
     app.use(express.json());
-    app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
-    // Register a health check route, to be used inside docker
-    registerHealthRoutes(app);
-
-    // Registering all app routes
-    registerTicketRoutes(app);
+    // Register all application routes
+    [registerSwaggerRoutes, registerHealthRoutes, registerTicketRoutes].forEach((route) => {
+      route(app);
+    });
 
     // Register the error handler
     app.use(errorHandler);
