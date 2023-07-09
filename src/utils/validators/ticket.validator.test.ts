@@ -30,10 +30,8 @@ describe('Ticket Validators', () => {
     it('should call next function if request body is valid', () => {
       const { request, response, next } = createExpressActions({
         body: {
-          ticket: {
-            client: 'Simple Task',
-            issue: 'Running jest test is awesome!',
-          },
+          client: 'Simple Task',
+          issue: 'Running jest test is awesome!',
         },
       });
 
@@ -44,10 +42,8 @@ describe('Ticket Validators', () => {
     it('should throw ApiError with status 400 if request body is invalid', () => {
       const { request, response, next } = createExpressActions({
         body: {
-          ticket: {
-            client: 'J',
-            issue: 'Running jest test is awesome!',
-          },
+          client: 'J',
+          issue: 'Running jest test is awesome!',
         },
       });
 
@@ -63,9 +59,7 @@ describe('Ticket Validators', () => {
     it('should call next function if request body and params are valid', () => {
       const { request, response, next } = createExpressActions({
         body: {
-          ticket: {
-            status: 'open' as TicketStatus,
-          },
+          status: 'open' as TicketStatus,
         },
         params: {
           id: '5349b4ddd2781d08c09890f3',
@@ -81,9 +75,7 @@ describe('Ticket Validators', () => {
     it('should throw `ApiError` with status 400 if request params are invalid', () => {
       const { request, response, next } = createExpressActions({
         body: {
-          ticket: {
-            status: 'open' as TicketStatus,
-          },
+          status: 'open' as TicketStatus,
         },
         params: {
           id: 'invalidId',
@@ -100,9 +92,7 @@ describe('Ticket Validators', () => {
     it('should throw ApiError with status 400 if request body is invalid', () => {
       const { request, response, next } = createExpressActions({
         body: {
-          ticket: {
-            status: 'INVALID_STATUS',
-          },
+          status: 'INVALID_STATUS',
         },
         params: {
           id: '5349b4ddd2781d08c09890f4',
@@ -112,6 +102,26 @@ describe('Ticket Validators', () => {
       expect(() => {
         validateTicketUpdate(request, response, next);
       }).toThrow(ApiError);
+      expect(next).not.toHaveBeenCalled();
+      expect(next).toHaveBeenCalledTimes(0);
+    });
+
+    it('should throw ApiError with status 400 if id has the right size, but wrong content', () => {
+      const { request, response, next } = createExpressActions({
+        body: {
+          status: 'INVALID_STATUS',
+        },
+        params: {
+          id: '5349b4ddd2781d0*7^!?(RB!',
+        },
+      });
+
+      expect(() => {
+        validateTicketUpdate(request, response, next);
+      }).toThrow(ApiError);
+      expect(() => {
+        validateTicketUpdate(request, response, next);
+      }).toThrow('The given "id", must be a valid (MongoDB) ObjectId');
       expect(next).not.toHaveBeenCalled();
       expect(next).toHaveBeenCalledTimes(0);
     });

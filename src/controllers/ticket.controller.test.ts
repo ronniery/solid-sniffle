@@ -14,7 +14,7 @@ interface CreateFaultyTicketOptions {
   status: number;
 }
 
-const createTicket = async (server: Express, payload: Partial<Record<string, unknown>>): Promise<Response> =>
+const createTicket = async (server: Express, payload: Partial<ITicket> | undefined): Promise<Response> =>
   await request(server)
     .post('/tickets')
     .set('Content-Type', 'application/json')
@@ -95,7 +95,7 @@ describe('Ticket Controller', () => {
 
   describe('(post) Create tickets on route /tickets', () => {
     const createTicketFaulty = async (
-      payload: Partial<Record<string, unknown>>,
+      payload: Partial<Record<string, unknown>> | undefined,
       options: CreateFaultyTicketOptions
     ): Promise<void> => {
       const response = await createTicket(server, payload);
@@ -119,7 +119,7 @@ describe('Ticket Controller', () => {
     };
 
     const createTicketSuccessfully = async (ticket: Partial<ITicket>): Promise<Response> => {
-      const response = await createTicket(server, { ticket });
+      const response = await createTicket(server, ticket);
 
       expect(response.status).toBe(StatusCodes.CREATED);
       expect(response.type).toBe('application/json');
@@ -135,30 +135,9 @@ describe('Ticket Controller', () => {
       expect(body).toBeDefined();
     });
 
-    it('should return error if body is nullable value', async () => {
-      const ticket = null;
-
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket" must be of type object',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
-    });
-
-    it('should return error if body has not allowed properties', async () => {
-      const badTicket = { name: 'test', action: 'jest' };
-
-      await createTicketFaulty(badTicket, {
-        message: '"ticket" is required',
-        status: StatusCodes.BAD_REQUEST,
-      });
-    });
-
     it('should return error if body has not allowed properties, and ticket property', async () => {
       const ticket = factory.ticket.withoutId.build();
-      const badTicket = { name: 'test', ticket };
+      const badTicket = { name: 'test', ...ticket };
 
       await createTicketFaulty(badTicket, {
         message: '"name" is not allowed',
@@ -170,70 +149,52 @@ describe('Ticket Controller', () => {
       // Client name does not exists
       let { client, ...ticket } = factory.ticket.withoutId.build();
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.client" is required',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"client" is required',
+        status: StatusCodes.BAD_REQUEST,
+      });
 
       // Client name is smaller than 1 [length]
       ticket = factory.ticket.withoutId.build({ client: 'a' });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.client" length must be at least 2 characters long',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"client" length must be at least 2 characters long',
+        status: StatusCodes.BAD_REQUEST,
+      });
 
       // Client name is bigger than 80 [length]
       ticket = factory.ticket.withoutId.build({ client: 'a'.padEnd(95, 'a') });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.client" length must be less than or equal to 80 characters long',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"client" length must be less than or equal to 80 characters long',
+        status: StatusCodes.BAD_REQUEST,
+      });
     });
 
     it('should return errors if ticket issue is not valid', async () => {
       // Issue does not exists
       let { issue, ...ticket } = factory.ticket.withoutId.build();
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.issue" is required',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"issue" is required',
+        status: StatusCodes.BAD_REQUEST,
+      });
 
       // Client name is smaller than 10 [length]
       ticket = factory.ticket.withoutId.build({ issue: 'aaaaaaa' });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.issue" length must be at least 10 characters long',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"issue" length must be at least 10 characters long',
+        status: StatusCodes.BAD_REQUEST,
+      });
 
       // Client name is bigger than 450 [length]
       ticket = factory.ticket.withoutId.build({ issue: 'a'.padEnd(500, 'a') });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.issue" length must be less than or equal to 450 characters long',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"issue" length must be less than or equal to 450 characters long',
+        status: StatusCodes.BAD_REQUEST,
+      });
     });
 
     it('should create ticket if its status does not exists', async () => {
@@ -247,13 +208,10 @@ describe('Ticket Controller', () => {
       // Status has an invalid value
       const ticket = factory.ticket.withoutId.build({ status: 'test' as TicketStatus });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.status" must be one of [open, closed]',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"status" must be one of [open, closed]',
+        status: StatusCodes.BAD_REQUEST,
+      });
     });
 
     it('should create ticket if its deadline does not exists', async () => {
@@ -267,35 +225,26 @@ describe('Ticket Controller', () => {
       // Deadline has an invalid value
       let ticket = factory.ticket.withoutId.build({ deadline: 'test' });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: '"ticket.deadline" must be a valid date',
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: '"deadline" must be a valid date',
+        status: StatusCodes.BAD_REQUEST,
+      });
 
       // Deadline is too old
       ticket = factory.ticket.withoutId.build({ deadline: new Date('1980-01-01').toISOString() });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: /"ticket.deadline" must be greater than/,
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: /"deadline" must be greater than/,
+        status: StatusCodes.BAD_REQUEST,
+      });
 
       // Deadline is too far in future
       ticket = factory.ticket.withoutId.build({ deadline: new Date('2099-01-01').toISOString() });
 
-      await createTicketFaulty(
-        { ticket },
-        {
-          message: /"ticket.deadline" must be less than/,
-          status: StatusCodes.BAD_REQUEST,
-        }
-      );
+      await createTicketFaulty(ticket, {
+        message: /"deadline" must be less than/,
+        status: StatusCodes.BAD_REQUEST,
+      });
     });
   });
 
@@ -303,21 +252,17 @@ describe('Ticket Controller', () => {
     let createdTicket: ITicket;
 
     beforeEach(async () => {
-      const ticket = factory.ticket.withoutId.build();
-      const { body } = await createTicket(server, { ticket });
+      const { _id, ...ticket } = factory.ticket.withId.build();
+      const { body } = await createTicket(server, ticket);
 
       createdTicket = body;
     });
 
     it('should update a ticket by ID', async () => {
       const ticketId = get<ITicket, string>(createdTicket, '_id').toString();
-      const response = await request(server)
-        .put('/tickets/'.concat(ticketId))
-        .send({
-          ticket: {
-            status: 'closed',
-          },
-        });
+      const response = await request(server).put('/tickets/'.concat(ticketId)).send({
+        status: 'closed',
+      });
 
       expect(response.status).toBe(StatusCodes.OK);
       expect(response.body).toBeDefined();
@@ -329,26 +274,18 @@ describe('Ticket Controller', () => {
     });
 
     it('should return an error, if we pass an invalid ID', async () => {
-      const response = await request(server)
-        .put('/tickets/invalid')
-        .send({
-          ticket: {
-            status: 'closed',
-          },
-        });
+      const response = await request(server).put('/tickets/invalid').send({
+        status: 'closed',
+      });
 
       expect(response.status).toBe(StatusCodes.BAD_REQUEST);
       expect(response.body.error).toBe('"value" length must be at least 24 characters long');
     });
 
     it('should return an error, if we pass an ObjectID invalid', async () => {
-      const response = await request(server)
-        .put('/tickets/507f191e810c19729de81111')
-        .send({
-          ticket: {
-            status: 'closed',
-          },
-        });
+      const response = await request(server).put('/tickets/507f191e810c19729de81111').send({
+        status: 'closed',
+      });
 
       expect(response.status).toBe(StatusCodes.NOT_FOUND);
       expect(response.body.error).toBe('Ticket not found');

@@ -17,7 +17,7 @@ export const getAllTickets = async (_req: Request, res: Response): Promise<void>
 
 // POST: /tickets
 export const createTicket = async (req: Request, res: Response): Promise<void> => {
-  const { ticket } = req.body;
+  const ticket = req.body;
   const createdTicket = await createTicketServiceCall(ticket);
 
   res.status(StatusCodes.CREATED).json(createdTicket);
@@ -26,7 +26,7 @@ export const createTicket = async (req: Request, res: Response): Promise<void> =
 // PUT: /tickets/{id}
 export const updateTicket = async (req: Request, res: Response): Promise<void> => {
   const { id } = req.params;
-  const { ticket: newTicket } = req.body;
+  const newTicket = req.body;
   const ticket = await updateTicketServiceCall(id, newTicket);
 
   if (ticket == null) {
