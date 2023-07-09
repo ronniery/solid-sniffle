@@ -2,10 +2,3 @@ dist/
 coverage/
 .vscode/
 node_modules/**/*
-
-nodemon.json
-.eslintrc.json
-tsconfig.json
-tsconfig.prod.json
-package.json
-package-lock.json

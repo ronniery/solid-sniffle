@@ -2,6 +2,8 @@ import 'dotenv-defaults/config';
 import express from 'express';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import swaggerUI from 'swagger-ui-express';
+import swaggerDocument from './swagger.json';
 
 import errorHandler from './utils/error.handler';
 import { registerTicketRoutes } from './routes/ticket.route';
@@ -20,6 +22,7 @@ const start = async (): Promise<void> => {
     // Creating the express app
     const app = express();
     app.use(express.json());
+    app.use('/api-doc', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
     // Register a health check route, to be used inside docker
     registerHealthRoutes(app);
