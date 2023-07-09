@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://localhost:3000"
+      "url": "http://localhost:3000"
     }
   ],
   "tags": [
@@ -19,9 +19,7 @@
   "paths": {
     "/tickets/{ticketId}": {
       "put": {
-        "tags": [
-          "Ticket"
-        ],
+        "tags": ["Ticket"],
         "summary": "Update an existing ticket",
         "description": "Update an existing ticket by Id",
         "operationId": "updateTicket",
@@ -97,9 +95,7 @@
     },
     "/tickets": {
       "post": {
-        "tags": [
-          "Ticket"
-        ],
+        "tags": ["Ticket"],
         "summary": "Add a new ticket into db",
         "description": "Add a new ticket into db",
         "operationId": "createTicket",
@@ -148,9 +144,7 @@
         }
       },
       "get": {
-        "tags": [
-          "Ticket"
-        ],
+        "tags": ["Ticket"],
         "summary": "Get all available tickets",
         "description": "List the previous created tickets",
         "operationId": "getAllTickets",
@@ -194,10 +188,7 @@
           },
           "status": {
             "type": "string",
-            "enum": [
-              "open",
-              "closed"
-            ],
+            "enum": ["open", "closed"],
             "description": "Ticket status:\n * `open` - It is still opened to changes\n * `closed` - It is closed for changes\n"
           },
           "client": {
@@ -216,20 +207,14 @@
             "example": "Some computers suddenly stopped to work"
           }
         },
-        "required": [
-          "client",
-          "issue"
-        ]
+        "required": ["client", "issue"]
       },
       "CreateTicketBody": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": [
-              "open",
-              "closed"
-            ],
+            "enum": ["open", "closed"],
             "description": "Ticket status:\n * `open` - It is still opened to changes\n * `closed` - It is closed for changes\n"
           },
           "client": {
@@ -248,26 +233,18 @@
             "example": "Some computers suddenly stopped to work"
           }
         },
-        "required": [
-          "client",
-          "issue"
-        ]
+        "required": ["client", "issue"]
       },
       "PartialTicketBody": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": [
-              "open",
-              "closed"
-            ],
+            "enum": ["open", "closed"],
             "description": "Ticket status:\n * `open` - It is still opened to changes\n * `closed` - It is closed for changes\n"
           }
         },
-        "required": [
-          "status"
-        ]
+        "required": ["status"]
       },
       "ApiError": {
         "type": "object",
