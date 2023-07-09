@@ -30,7 +30,7 @@ HEALTHCHECK --interval=30s --timeout=3s \
 CMD curl -f "http://localhost:${APP_PORT}/health" || exit 1
 
 # Create an argument for application port
-ARG APP_PORT=6000
+ARG APP_PORT=46000
 ENV APP_PORT=$APP_PORT
 
 # Expose the application port
