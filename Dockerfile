@@ -1,5 +1,5 @@
 # First stage, build
-FROM node:16.20.0-alpine as build-stage
+FROM node:16.20.0 as build-stage
 
 # Set the workdir
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN npm install && \
     npm run build
 
 # Second stage, publish
-FROM node:16.20.0-alpine as publish-stage
+FROM node:16.20.0 as publish-stage
 
 # Set the workdir
 WORKDIR /app
@@ -22,8 +22,8 @@ COPY --from=build-stage /app/dist ./
 COPY --from=build-stage /app/package.json ./
 
 # Install the necessary dependencies
-RUN apk update && apk upgrade && apk add curl && \
-    npm install --omit=dev --ignore-scripts && npm install -g cross-env
+RUN apt-get update && apt-get install -y curl && \
+    npm install --no-cache --omit=dev --ignore-scripts && npm install -g cross-env
 
 # Set the health check condition
 HEALTHCHECK --interval=30s --timeout=3s \
