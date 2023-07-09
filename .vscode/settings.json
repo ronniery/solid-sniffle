@@ -6,7 +6,6 @@
     "**/CVS": true,
     "**/.DS_Store": true,
     "**/Thumbs.db": true,
-
     "node_modules": true,
     "dist": false,
     ".dockerignore": true,
@@ -16,12 +15,15 @@
     ".prettierrc": true,
     ".tool-versions": true,
     ".eslint": true,
+    ".eslintignore": true,
+    ".eslintrc.json": true,
+    ".gitattributes": true,
     "src/**/*.test.ts": true,
     "src/**/index.ts": true,
     "package-lock.json": true,
     "Dockerfile": true,
     "jest.config.js": true,
-    "tsconfig.json": false,
+    "tsconfig.json": true,
     "nodemon.json": true,
     "yarn.lock": true
   }
