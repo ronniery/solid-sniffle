@@ -7,8 +7,8 @@
     "start": "cross-env DEBUG=express:* & nodemon",
     "prettier": "npx prettier --check \"src/**/*.{ts,js,json}\"",
     "prettier:fix": "npx prettier --write \"src/**/*.{ts,js,json}\"",
-    "lint": "npx eslint src/ --ext .js,.jsx,.ts,.tsx",
-    "lint:fix": "npx eslint src/ --ext .js,.jsx,.ts,.tsx --fix",
+    "lint": "npx eslint src/ --ext .js,.ts",
+    "lint:fix": "npx eslint src/ --ext .js,.ts --fix",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.prod.json",
     "test:watch": "jest --watchAll --no-cache --runInBand --detectOpenHandles",
@@ -69,7 +69,7 @@
   "lint-staged": {
     "**/*.{js,ts,json}": [
       "npx pretty-quick --staged",
-      "npx eslint src/ --ext .js,.ts,.json --fix"
+      "npx eslint src/ --ext .js,.ts --fix"
     ]
   }
 }
