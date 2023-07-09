@@ -1,0 +1,14 @@
+version: "3.9"
+services:
+  backend:
+    container_name: imagine_dragons
+    restart: on-failure
+    image: rbcorrea/solid-sniffle:latest
+    ports:
+      - "46000:46000"
+  frontend:
+    container_name: hard_days
+    restart: on-failure
+    image: rbcorrea/glowing-memory:latest
+    ports:
+      - "46001:46001"
