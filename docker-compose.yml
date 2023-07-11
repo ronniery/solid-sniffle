@@ -8,6 +8,9 @@ services:
       - "46000:46000"
   frontend:
     container_name: hard_days
+    depends_on:
+      backend:
+        condition: service_healthy
     restart: on-failure
     image: rbcorrea/glowing-memory:latest
     ports:
