@@ -15,7 +15,7 @@ printf "   %b" "$RED ↪ The container black_in_black will take several minutes.
 docker compose -f ./docker-compose.yml up -d
 
 # Removing the downloaded file
-printf "%b" "$YELLOW → "Removing docker-compose.yml file from local computer..."$NO_COLOR\n"
+echo "Removing docker-compose.yml file from local computer..."
 rm ./docker-compose.yml
 
 # Showing then how to access the endpoint application
