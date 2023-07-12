@@ -15,4 +15,10 @@ printf "   %b" "$RED ↪ The container black_in_black will take several minutes.
 docker compose -f ./docker-compose.yml up -d
 
 # Removing the downloaded file
+printf "%b" "$YELLOW → "Removing docker-compose.yml file from local computer..."$NO_COLOR\n"
 rm ./docker-compose.yml
+
+# Showing then how to access the endpoint application
+printf "\nOpen the following urls for each project:\n
+  - (frontend): http://localhost:46001/
+  - (backend): http://localhost:46000/swagger \n"
