@@ -1,13 +1,13 @@
 version: "3.9"
 services:
   backend:
-    container_name: imagine_dragons
+    container_name: black_in_black
     restart: on-failure
     image: rbcorrea/solid-sniffle:latest
     ports:
       - "46000:46000"
   frontend:
-    container_name: hard_days
+    container_name: hotel_california
     depends_on:
       backend:
         condition: service_healthy
